@@ -24,8 +24,6 @@ from dotenv import load_dotenv
 dotenv_path = join(dirname(__file__), '.env')
 load_dotenv(dotenv_path)
 
-djcelery.setup_loader()
-
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -64,6 +62,7 @@ INSTALLED_APPS = [
 
     'rest_framework',
     'djcelery',
+    'kombu.transport.django',
 
     'users'
 ]
@@ -97,7 +96,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'the-project.wsgi.application'
-
 
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
@@ -175,6 +173,15 @@ JWT_AUTH = {
     'JWT_AUTH_HEADER_PREFIX': 'JWT',
     'JWT_AUTH_COOKIE': None,
 }
+
+# Celery
+djcelery.setup_loader()
+
+BROKER_URL = 'django://'
+
+CELERY_IMPORTS = [
+    'tweets.tasks'
+]
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/
