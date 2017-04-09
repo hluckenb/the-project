@@ -85,3 +85,4 @@ target/
 .DS_Store
 
 *.pem
+.env

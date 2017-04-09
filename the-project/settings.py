@@ -12,22 +12,10 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 
 import os
 import datetime
+import djcelery
 
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
-
-with open("private.pem", "rb") as key_file:
-    PRIVATE_KEY = serialization.load_pem_private_key(
-        key_file.read(),
-        password=str.encode('theproject'),
-        backend=default_backend()
-    )
-
-with open("public.pem", "rb") as key_file:
-    PUBLIC_KEY = serialization.load_pem_public_key(
-        key_file.read(),
-        backend=default_backend()
-    )
 
 # Load environment variables from .env file
 from os.path import join, dirname
@@ -35,6 +23,8 @@ from dotenv import load_dotenv
 
 dotenv_path = join(dirname(__file__), '.env')
 load_dotenv(dotenv_path)
+
+djcelery.setup_loader()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -44,6 +34,19 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('SECRET_KEY')
+
+with open('private.pem', 'rb') as key_file:
+    PRIVATE_KEY = serialization.load_pem_private_key(
+        key_file.read(),
+        password=str.encode('theproject'),
+        backend=default_backend()
+    )
+
+with open('public.pem', 'rb') as key_file:
+    PUBLIC_KEY = serialization.load_pem_public_key(
+        key_file.read(),
+        backend=default_backend()
+    )
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True if os.environ.get('ENVIRONMENT') == 'development' else False
@@ -60,6 +63,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework',
+    'djcelery',
 
     'users'
 ]
