@@ -64,7 +64,8 @@ INSTALLED_APPS = [
     'djcelery',
     'kombu.transport.django',
 
-    'users'
+    'users',
+    'tweets'
 ]
 
 MIDDLEWARE = [
@@ -182,6 +183,14 @@ BROKER_URL = 'django://'
 CELERY_IMPORTS = [
     'tweets.tasks'
 ]
+
+# Cache
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': '/var/tmp/django_cache',
+    }
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/
