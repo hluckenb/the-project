@@ -9,7 +9,7 @@ from tweets.celery import app
 from urllib.parse import parse_qs
 
 @app.task
-def start_collection(hashtag='radiohead')
+def start_collection(hashtag='radiohead'):
     get_tweets(f'?q=%23{hashtag}')
 
 @app.task
