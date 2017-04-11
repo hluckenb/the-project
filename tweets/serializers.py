@@ -14,4 +14,8 @@ class TweetSerializer(serializers.ModelSerializer):
         fields = ('tweet_id', 'created_at', 'text', 'retweet_count', 'handle', 'media_type')
 
     def create(self, validated_data):
-        return Tweet.objects.create(**validated_data)
+        tweet, created = Tweet.objects.update_or_create(
+            tweet_id=validated_data.get('tweet_id'),
+            defaults=validated_data
+        )
+        return tweet

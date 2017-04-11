@@ -25,8 +25,6 @@ def get_tweets(query):
         serializer = TweetSerializer(data=parse(status))
         if serializer.is_valid():
             serializer.save()
-        else:
-            print(serializer.errors)
 
     next_query = r.json().get('search_metadata').get('next_results')
     if next_query:
