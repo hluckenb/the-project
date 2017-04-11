@@ -19,7 +19,9 @@ def start_collection(hashtag='radiohead', days=7):
 
 @app.task
 def get_tweets(query):
-    r = requests.get(f'https://api.twitter.com/1.1/search/tweets.json{query}', headers={'Authorization': 'Bearer ' + token()})
+    r = requests.get(f'https://api.twitter.com/1.1/search/tweets.json{query}',
+        headers={'Authorization': 'Bearer ' + token()}
+    )
 
     for status in r.json().get('statuses'):
         serializer = TweetSerializer(data=parse(status))
@@ -42,7 +44,11 @@ def token():
 def get_token():
     auth_data = encode(os.environ.get('TWITTER_CONSUMER_KEY') + ':' + os.environ.get('TWITTER_CONSUMER_SECRET'))
 
-    r = requests.post('https://api.twitter.com/oauth2/token', headers={'Authorization': f'Basic {auth_encoded}'}, data={'grant_type': 'client_credentials'})
+    r = requests.post('https://api.twitter.com/oauth2/token',
+        headers={'Authorization': f'Basic {auth_encoded}'},
+        data={'grant_type': 'client_credentials'}
+    )
+
     return r.json().get('access_token')
 
 def encode(val):
