@@ -1,20 +1,28 @@
 from __future__ import absolute_import
 
 import os
+import time
 import base64
 import requests
 
 from django.core.cache import cache
-from tweets.celery import app
 from urllib.parse import parse_qs
+from tweets.celery import app
+from tweets.serializers import TweetSerializer
 
-@app.task
 def start_collection(hashtag='radiohead'):
-    get_tweets(f'?q=%23{hashtag}')
+    get_tweets.delay(f'?q=%23{hashtag}')
 
 @app.task
 def get_tweets(query):
     r = requests.get(f'https://api.twitter.com/1.1/search/tweets.json{query}', headers={'Authorization': 'Bearer ' + token()})
+
+    for status in r.json().get('statuses'):
+        serializer = TweetSerializer(data=parse(status))
+        if serializer.is_valid():
+            serializer.save()
+        else:
+            print(serializer.errors)
 
     next_query = r.json()['search_metadata']['next_results']
     if next_query:
@@ -40,4 +48,15 @@ def get_token():
 def encode(val):
     return base64.b64encode(bytes(val, encoding='utf-8')).decode('utf-8')
 
-# from tweets.tasks import get_tweets
+def parse(data):
+    return {
+             'tweet_id' : data.get('id'),
+           'created_at' : time.strftime('%Y-%m-%dT%H:%M:%SZ', time.strptime(data.get('created_at'), '%a %b %d %H:%M:%S +0000 %Y')),
+                 'text' : data.get('text'),
+        'retweet_count' : data.get('retweet_count'),
+               'handle' : data.get('user').get('screen_name'),
+           'media_type' : media_type(data.get('entities').get('media'))
+    }
+
+def media_type(media):
+    return media[0].get('type') if media else None
