@@ -18,5 +18,6 @@ from rest_framework_jwt.views import obtain_jwt_token
 
 urlpatterns = [
     url(r'^users/', include('users.urls')),
+    url(r'^tweets/', include('tweets.urls')),
     url(r'^api-token-auth/', obtain_jwt_token)
 ]

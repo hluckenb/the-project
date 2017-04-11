@@ -1,7 +1,6 @@
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework_jwt.utils import jwt_decode_handler
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from users import serializers
 

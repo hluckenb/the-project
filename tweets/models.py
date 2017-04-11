@@ -9,4 +9,4 @@ class Tweet(models.Model):
     handle = models.CharField(max_length=255)
     media_type = models.CharField(null=True, max_length=255)
 
-    collected_at = models.DateField(auto_now_add=True)
+    collected_at = models.DateTimeField(auto_now_add=True)
