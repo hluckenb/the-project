@@ -12,6 +12,7 @@ from urllib.parse import parse_qs
 from tweets.celery import app
 from tweets.serializers import TweetSerializer
 
+@app.task
 def start_collection(hashtag='radiohead', days=7):
     days_ago = datetime.now(pytz.timezone(settings.TIME_ZONE)) - timedelta(days=days)
     twitter_format = days_ago.strftime('%Y-%m-%d')

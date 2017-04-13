@@ -86,3 +86,5 @@ target/
 
 *.pem
 .env
+
+celerybeat*
