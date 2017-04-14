@@ -19,7 +19,7 @@ from tweets.serializers import TweetSerializer
 def start_collection(hashtag='radiohead', days=7):
     days_ago = datetime.now(pytz.timezone(settings.TIME_ZONE)) - timedelta(days=days)
     twitter_format = days_ago.strftime('%Y-%m-%d')
-    get_tweets.delay(f'?q=%23{hashtag}%20since:{twitter_format}%20exclude:replies%20exclude:retweets&count=100')
+    get_tweets.delay(f'?q=%23{hashtag}%20since:{twitter_format}%20exclude:replies%20exclude:retweets%20lang:en&count=100')
 
 @app.task
 def get_tweets(query):
@@ -35,9 +35,6 @@ def get_tweets(query):
     next_query = r.json().get('search_metadata').get('next_results')
     if next_query:
         get_tweets.delay(next_query)
-
-    print(r.json())
-
 
 def token():
     token = cache.get('access-token')
@@ -62,9 +59,11 @@ def encode(val):
     return base64.b64encode(bytes(val, encoding='utf-8')).decode('utf-8')
 
 def parse(data):
+    created_at = datetime.strptime(data.get('created_at'), '%a %b %d %H:%M:%S +0000 %Y')
+
     return {
              'tweet_id' : data.get('id_str'),
-           'created_at' : datetime.strptime(data.get('created_at'), '%a %b %d %H:%M:%S +0000 %Y').isoformat(),
+           'created_at' : pytz.utc.localize(created_at),
                  'text' : data.get('text'),
         'retweet_count' : data.get('retweet_count'),
                'handle' : data.get('user').get('screen_name'),
