@@ -2,7 +2,7 @@ from tweets.models import Tweet
 from rest_framework import serializers
 
 class TweetSerializer(serializers.ModelSerializer):
-    tweet_id = serializers.IntegerField()
+    tweet_id = serializers.CharField()
     created_at = serializers.DateTimeField()
     text = serializers.CharField()
     retweet_count = serializers.IntegerField()

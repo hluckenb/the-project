@@ -5,6 +5,9 @@ import pytz
 import base64
 import requests
 
+from requests.packages.urllib3.util.retry import Retry
+from requests.adapters import HTTPAdapter
+
 from datetime import datetime, timedelta
 from django.conf import settings
 from django.core.cache import cache
@@ -16,11 +19,11 @@ from tweets.serializers import TweetSerializer
 def start_collection(hashtag='radiohead', days=7):
     days_ago = datetime.now(pytz.timezone(settings.TIME_ZONE)) - timedelta(days=days)
     twitter_format = days_ago.strftime('%Y-%m-%d')
-    get_tweets.delay(f'?q=%23{hashtag}%20since:{twitter_format}%20&count=100')
+    get_tweets.delay(f'?q=%23{hashtag}%20since:{twitter_format}%20exclude:replies%20exclude:retweets&count=100')
 
 @app.task
 def get_tweets(query):
-    r = requests.get(f'https://api.twitter.com/1.1/search/tweets.json{query}',
+    r = api_request().get(f'https://api.twitter.com/1.1/search/tweets.json{query}',
         headers={'Authorization': 'Bearer ' + token()}
     )
 
@@ -32,6 +35,9 @@ def get_tweets(query):
     next_query = r.json().get('search_metadata').get('next_results')
     if next_query:
         get_tweets.delay(next_query)
+
+    print(r.json())
+
 
 def token():
     token = cache.get('access-token')
@@ -45,7 +51,7 @@ def token():
 def get_token():
     auth_data = encode(os.environ.get('TWITTER_CONSUMER_KEY') + ':' + os.environ.get('TWITTER_CONSUMER_SECRET'))
 
-    r = requests.post('https://api.twitter.com/oauth2/token',
+    r = api_request().post('https://api.twitter.com/oauth2/token',
         headers={'Authorization': f'Basic {auth_encoded}'},
         data={'grant_type': 'client_credentials'}
     )
@@ -57,7 +63,7 @@ def encode(val):
 
 def parse(data):
     return {
-             'tweet_id' : data.get('id'),
+             'tweet_id' : data.get('id_str'),
            'created_at' : datetime.strptime(data.get('created_at'), '%a %b %d %H:%M:%S +0000 %Y').isoformat(),
                  'text' : data.get('text'),
         'retweet_count' : data.get('retweet_count'),
@@ -67,3 +73,15 @@ def parse(data):
 
 def media_type(media):
     return media[0].get('type') if media else None
+
+def api_request():
+    session = requests.Session()
+
+    retries = Retry(total=5,
+        backoff_factor=60,
+        status_forcelist=[500, 502, 503, 504]
+    )
+
+    session.mount('https://', HTTPAdapter(max_retries=retries))
+
+    return session

@@ -2,7 +2,7 @@ from django.db import models
 
 class Tweet(models.Model):
 
-    tweet_id = models.BigIntegerField()
+    tweet_id = models.CharField(max_length=255)
     created_at = models.DateTimeField()
     text = models.TextField()
     retweet_count = models.IntegerField(db_index=True)

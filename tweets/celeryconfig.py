@@ -11,7 +11,7 @@ CELERY_ENABLE_UTC = True
 CELERYBEAT_SCHEDULE = {
     'daily-collection': {
         'task': 'tweets.tasks.start_collection',
-        'schedule': crontab(hour=2, minute=0),
+        'schedule': crontab(minute=0, hour='*'),
         'args': ()
     }
 }
