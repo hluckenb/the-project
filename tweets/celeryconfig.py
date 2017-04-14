@@ -9,7 +9,7 @@ CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TIMEZONE = 'US/Central'
 CELERY_ENABLE_UTC = True
 CELERYBEAT_SCHEDULE = {
-    'daily-collection': {
+    'hourly-collection': {
         'task': 'tweets.tasks.start_collection',
         'schedule': crontab(minute=0, hour='*'),
         'args': ()
