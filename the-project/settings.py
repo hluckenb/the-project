@@ -63,6 +63,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'djcelery',
     'kombu.transport.django',
+    'corsheaders',
 
     'users',
     'tweets'
@@ -76,6 +77,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'the-project.urls'
@@ -210,3 +212,15 @@ USE_TZ = False
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# CORS
+
+CORS_ALLOW_METHODS = (
+    'GET',
+    'POST',
+    'PUT',
+)
+
+CORS_ORIGIN_WHITELIST = (
+    'localhost:3000',
+)

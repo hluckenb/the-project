@@ -12,9 +12,6 @@ from datetime import datetime, timedelta
 
 class TweetView(APIView):
 
-    authentication_classes = ()
-    permission_classes = ()
-
     def get(self, request, format=None):
         week_previous = datetime.now() - timedelta(days=7)
 
