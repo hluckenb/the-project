@@ -6,10 +6,11 @@ class UserCreateSerializer(serializers.ModelSerializer):
     username = serializers.CharField(max_length=None, min_length=4, allow_blank=False, trim_whitespace=True,
         validators=[UniqueValidator(queryset=User.objects.all())])
     password = serializers.CharField(max_length=None, min_length=6, allow_blank=False, trim_whitespace=True)
+    confirm_password = serializers.SerializerMethodField()
 
     class Meta:
         model = User
-        fields = ('id', 'username', 'password')
+        fields = ('id', 'username', 'password', 'confirm_password')
 
     def create(self, validated_data):
         user = User(**validated_data)
@@ -24,8 +25,14 @@ class UserCreateSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
+    def validate(self, data):
+        if self.initial_data['password'] != self.initial_data['confirm_password']:
+            raise serializers.ValidationError({
+                'password': 'Password and confirmation must match.'
+            })
+        return data
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('id', 'username')
-
