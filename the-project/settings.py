@@ -36,7 +36,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 with open('private.pem', 'rb') as key_file:
     PRIVATE_KEY = serialization.load_pem_private_key(
         key_file.read(),
-        password=str.encode('theproject'),
+        password=str.encode(os.environ.get('PKEY_PASSWORD')),
         backend=default_backend()
     )
 
@@ -49,7 +49,11 @@ with open('public.pem', 'rb') as key_file:
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True if os.environ.get('ENVIRONMENT') == 'development' else False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'localhost',
+    'ec2-54-245-75-254.us-west-2.compute.amazonaws.com',
+    'project-api.haydenluckenbach.com'
+]
 
 # Application definition
 
