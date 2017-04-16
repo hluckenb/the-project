@@ -1,5 +1,11 @@
 from __future__ import absolute_import
 
+import os
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'the-project.settings')
+
+import django
+django.setup()
+
 from celery import Celery
 from tweets import celeryconfig
 
