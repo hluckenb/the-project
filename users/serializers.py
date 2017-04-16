@@ -26,7 +26,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
         return instance
 
     def validate(self, data):
-        if self.initial_data['password'] != self.initial_data['confirm_password']:
+        if self.initial_data.get('password') and (self.initial_data.get('password') != self.initial_data.get('confirm_password')):
             raise serializers.ValidationError({
                 'password': 'Password and confirmation must match.'
             })
