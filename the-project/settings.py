@@ -227,4 +227,5 @@ CORS_ALLOW_METHODS = (
 
 CORS_ORIGIN_WHITELIST = (
     'localhost:3000',
+    'project-api.haydenluckenbach.com'
 )
