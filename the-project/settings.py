@@ -203,7 +203,7 @@ CACHES = {
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'US/Central'
+TIME_ZONE = 'America/Chicago'
 
 USE_I18N = True
 
@@ -227,5 +227,8 @@ CORS_ALLOW_METHODS = (
 
 CORS_ORIGIN_WHITELIST = (
     'localhost:3000',
-    'project.haydenluckenbach.com'
+    'project.haydenluckenbach.com',
+    'ec2-54-245-75-254.us-west-2.compute.amazonaws.com'
 )
+
+DEFAULT_INDEX_TABLESPACE='the-project.settings'

@@ -19,11 +19,11 @@ from tweets.serializers import TweetSerializer
 def start_collection(hashtag='radiohead', days=7):
     days_ago = datetime.now(pytz.timezone(settings.TIME_ZONE)) - timedelta(days=days)
     twitter_format = days_ago.strftime('%Y-%m-%d')
-    get_tweets.delay(f'?q=%23{hashtag}%20since:{twitter_format}%20exclude:replies%20exclude:retweets%20lang:en&count=100')
+    get_tweets.delay('?q=%23' + hashtag + '%20since:' + twitter_format + '%20exclude:replies%20exclude:retweets%20lang:en&count=100')
 
 @app.task
 def get_tweets(query):
-    r = api_request().get(f'https://api.twitter.com/1.1/search/tweets.json{query}',
+    r = api_request().get('https://api.twitter.com/1.1/search/tweets.json' + query,
         headers={'Authorization': 'Bearer ' + token()}
     )
 
@@ -49,7 +49,7 @@ def get_token():
     auth_data = encode(os.environ.get('TWITTER_CONSUMER_KEY') + ':' + os.environ.get('TWITTER_CONSUMER_SECRET'))
 
     r = api_request().post('https://api.twitter.com/oauth2/token',
-        headers={'Authorization': f'Basic {auth_encoded}'},
+        headers={'Authorization': 'Basic ' + auth_data},
         data={'grant_type': 'client_credentials'}
     )
 
