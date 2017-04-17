@@ -16,10 +16,10 @@ from tweets.celery import app
 from tweets.serializers import TweetSerializer
 
 @app.task
-def start_collection(hashtag='radiohead', days=7):
+def start_collection(hashtag='coffee', days=7):
     days_ago = datetime.now(pytz.timezone(settings.TIME_ZONE)) - timedelta(days=days)
     twitter_format = days_ago.strftime('%Y-%m-%d')
-    get_tweets.delay('?q=%23' + hashtag + '%20since:' + twitter_format + '%20exclude:replies%20exclude:retweets%20lang:en&count=100')
+    get_tweets.delay('?q=%23' + hashtag + '%20since%3A' + twitter_format + '%20-filter%3Areplies%20-filter%3Aretweets%20lang%3Aen&count=100')
 
 @app.task
 def get_tweets(query):
