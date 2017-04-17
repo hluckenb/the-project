@@ -11,7 +11,6 @@ from requests.adapters import HTTPAdapter
 from datetime import datetime, timedelta
 from django.conf import settings
 from django.core.cache import cache
-from urllib.parse import parse_qs
 from tweets.celery import app
 from tweets.serializers import TweetSerializer
 
